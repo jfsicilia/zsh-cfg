@@ -220,6 +220,7 @@ alias vi=nvim
 alias vim=nvim
 alias nvim-lazy='NVIM_APPNAME="nvim-lazy" nvim'
 alias nvim-astro='NVIM_APPNAME="nvim-astro" nvim'
+alias tp=trash
 alias c=clear
 alias open=xdg-open
 alias _="cd ~/_"
@@ -227,6 +228,9 @@ alias today="fd --changed-within=1d -tf '.*' ~"
 # alias tmux='tmux -S ~/.tmux-socket'
 alias claude="titled 'Claude Code' claude"
 alias '??'="claude -p"
+alias obsidian='~/.local/bin/appimages/obsidian.appimage --no-sandbox'
+alias zapzap='~/.local/bin/appimages/zapzap.appimage --no-sandbox'
+alias autofirma="GDK_SCALE=2 autofirma"
 unalias ls 2>/dev/null
 
 # ENV VARIABLES ==============================================================
@@ -367,3 +371,17 @@ TRAPINT() {
 }
 
 export VI_MODE="I"
+
+# VI MODE: Yank to clipboard  =====================================================
+
+# Custom yank that copies to system clipboard
+function zle-yank-to-clipboard() {
+  zle vi-yank                        
+  echo -n "$CUTBUFFER" | wl-copy
+}
+zle -N zle-yank-to-clipboard
+
+# Override y in visual mode to also copy to clipboard
+bindkey -M vicmd 'y' zle-yank-to-clipboard
+bindkey -M visual 'y' zle-yank-to-clipboard
+
