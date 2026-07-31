@@ -226,7 +226,8 @@ alias open=xdg-open
 alias _="cd ~/_"
 alias today="fd --changed-within=1d -tf '.*' ~"
 # alias tmux='tmux -S ~/.tmux-socket'
-alias claude="titled 'Claude Code' claude"
+# alias claude="titled 'Claude Code' claude"
+alias claude="CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1 titled 'Claude Code' claude"
 alias '??'="claude -p"
 alias obsidian='~/.local/bin/appimages/obsidian.appimage --no-sandbox'
 alias zapzap='~/.local/bin/appimages/zapzap.appimage --no-sandbox'
