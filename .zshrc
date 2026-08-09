@@ -145,7 +145,9 @@ bindkey '^n' history-search-forward
 bindkey '^@' forward-char
 # Ctrl+e edit line in editor.
 bindkey '^e' edit-command-line
+# Ctrl+f fzf file selection.
 bindkey '^f' fzf-file-widget 
+# Ctrl+y fzf history selection.
 bindkey '^y' fzf-history-widget 
 bindkey -M vicmd '^e' edit-command-line
 bindkey -M vicmd 'H' beginning-of-line
@@ -231,6 +233,7 @@ alias claude="CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1 titled 'Claude Code' claude"
 alias '??'="claude -p"
 alias obsidian='~/.local/bin/appimages/obsidian.appimage --no-sandbox'
 alias zapzap='~/.local/bin/appimages/zapzap.appimage --no-sandbox'
+alias preview="fzf --preview 'bat --style=numbers --color=always --line-range :500 {}' --bind 'ctrl-f:preview-page-down,ctrl-b:preview-page-up'"
 alias autofirma="GDK_SCALE=2 autofirma"
 unalias ls 2>/dev/null
 
