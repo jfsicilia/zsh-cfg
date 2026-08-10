@@ -203,13 +203,19 @@ setopt pushd_silent       # no stack output on every cd
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}' # Ignore case in autocompletion.
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" # Put colors in autocompletion.
 zstyle ':completion:*' menu no # Beter uix for tab completion with fzf.
-zstyle ':fzf-tab:*' fzf-bindings enter:accept ctrl-j:down ctrl-k:up
+zstyle ':fzf-tab:*' fzf-bindings-default tab:accept btab:up change:top space:toggle bspace:backward-delete-char/eof ctrl-h:backward-delete-char/eof
+zstyle ':fzf-tab:*' fzf-bindings ctrl-j:down ctrl-k:up
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath' # Open previews on tab completion.
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath' # zoxide preview
 
 # SHELL INTEGRATIONS =========================================================
-# Ctrl+r to fuzzy search history. Ctrl+t to fuzzy find files. Alt+c to fuzzy
-# go to folders.
+# Applies to standalone fzf and the widgets below (fzf-tab above has its own
+# bindings via zstyle and ignores this).
+# ctrl-space:toggle keeps multi-select working (e.g. Ctrl+t, Ctrl+r) now that
+# tab accepts instead of toggling.
+export FZF_DEFAULT_OPTS='--bind=tab:accept,space:toggle,ctrl-j:down,ctrl-k:up'
+# "fzf --zsh" add hooks with these bindings: Ctrl+r to fuzzy search history. 
+# Ctrl+t to fuzzy find files. Alt+c to fuzzy go to folders.
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(direnv hook zsh)"
