@@ -32,6 +32,8 @@ zinit snippet OMZP::docker
 zinit snippet OMZP::docker-compose
 
 
+# Add .zsh/completions directory to fpath so that zsh can find that completions.
+fpath=(~/.zsh/completions $fpath)
 # Load completions
 autoload -Uz compinit && compinit
 
