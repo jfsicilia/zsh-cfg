@@ -221,6 +221,7 @@ export FZF_DEFAULT_OPTS='--bind=tab:accept,space:toggle,ctrl-j:down,ctrl-k:up'
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(direnv hook zsh)"
+eval "$(atuin init zsh)"
 
 # PROMPT MANAGER =============================================================
 eval "$(oh-my-posh init zsh --config ~/.config/ohmyposh/config.toml)"
