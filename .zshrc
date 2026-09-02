@@ -268,6 +268,19 @@ export LS_COLORS="$LS_COLORS:ow=01;33"
 
 
 # FUNCTIONS ==============================================================
+
+# Allow terminal to tell nvim the current working directory has changed, so that nvim can update its cwd.
+
+# :help terminal-osc133
+function precmd() {
+    printf "\033]133;A\007"
+}
+function chpwd() {
+    [[ -S "$NVIM" ]] || return
+    # nohup is used to avoid the job number being displayed from the &
+    nohup nvim --server "$NVIM" --remote-expr "chdir('$PWD')" > /dev/null 2>&1
+}
+
 function cd() {
   if [[ "$1" == (-|..|../*|./*|/*|~/*|~) ]]; then
     builtin pushd "$@" > /dev/null
