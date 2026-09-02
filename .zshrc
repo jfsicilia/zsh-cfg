@@ -231,6 +231,7 @@ eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(direnv hook zsh)"
 eval "$(atuin init zsh --disable-up-arrow)"
+eval "$(workmux completions zsh)"
 
 # PROMPT MANAGER =============================================================
 eval "$(oh-my-posh init zsh --config ~/.config/ohmyposh/config.toml)"
@@ -253,6 +254,7 @@ alias obsidian='~/.local/bin/appimages/obsidian.appimage --no-sandbox'
 alias zapzap='~/.local/bin/appimages/zapzap.appimage --no-sandbox'
 alias preview="fzf --preview 'bat --style=numbers --color=always --line-range :500 {}' --bind 'ctrl-f:preview-page-down,ctrl-b:preview-page-up'"
 alias autofirma="GDK_SCALE=2 autofirma"
+alias wm="workmux"
 unalias ls 2>/dev/null
 
 # ENV VARIABLES ==============================================================
