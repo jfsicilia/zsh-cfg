@@ -155,6 +155,15 @@ bindkey -M vicmd '^e' edit-command-line
 bindkey -M vicmd 'H' beginning-of-line
 bindkey -M vicmd 'L' end-of-line
 
+# Keep Ctrl+Alt+Space (voice-to-text trigger) from kicking insert mode into
+# normal mode. The combo emits `^[^@` (ESC + Ctrl+Space); left unbound, ZLE runs
+# the bare `^[` binding (vi-cmd-mode) and leaks the rest. Bind it to a no-op so
+# ZLE consumes the whole sequence and the cursor stays put.
+_noop-widget() { }
+zle -N _noop-widget
+bindkey -M viins '^[^@' _noop-widget
+bindkey -M vicmd '^[^@' _noop-widget
+
 # With my own key bindings and other added by different plugins this is the
 # current keybindings in vim mode.
 #
