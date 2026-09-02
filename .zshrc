@@ -281,6 +281,7 @@ function chpwd() {
     nohup nvim --server "$NVIM" --remote-expr "chdir('$PWD')" > /dev/null 2>&1
 }
 
+# Use pushd to stack directories history.
 function cd() {
   if [[ "$1" == (-|..|../*|./*|/*|~/*|~) ]]; then
     builtin pushd "$@" > /dev/null
@@ -289,6 +290,7 @@ function cd() {
   fi
 }
 
+# Allow nvim to diff two directories or files.
 function dirdiff() {
   nvim -c "DirDiff $1 $2"
 }
@@ -296,6 +298,7 @@ function filediff() {
   nvim -d $1 $2
 }
 
+# Prepend a title to the terminal window, run the command, then reset the title back to the current working directory.
 function titled() {
   local title="$1"; shift
   print -Pn "\e]0;${title}\a"
@@ -303,6 +306,7 @@ function titled() {
   print -Pn "\e]0;%~\a"
 }
 
+# Allow `ls` to ignore files listed in a `.hidden` file in the target directory, unless the user explicitly requests to show all files.
 function ls() {
     # 1. Check if the user wants to show all files
     local show_all=0
