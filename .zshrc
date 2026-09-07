@@ -261,7 +261,9 @@ unalias ls 2>/dev/null
 # Set default editor
 export EDITOR=nvim
 export VISUAL=nvim
-export GITHUB_PERSONAL_ACCESS_TOKEN="$(gh auth token)" 
+export GITHUB_PERSONAL_ACCESS_TOKEN="$(gh auth token)"
+# Default AI agent command used by helpers like `dev-layout`.
+export DEFAULT_AGENT=claude
 # Change color for other-writable (mounted windows filesystems) to avoid
 # inverte green block that was unreadable.
 export LS_COLORS="$LS_COLORS:ow=01;33"
@@ -304,6 +306,36 @@ function titled() {
   print -Pn "\e]0;${title}\a"
   "$@"
   print -Pn "\e]0;%~\a"
+}
+
+# Creates a tmux layout with editor, agent and shell.
+#
+#   ┌───────────────────────┬───────────┐
+#   │                       │  agent    │
+#   │        editor         ├───────────┤
+#   │                       │  shell    │
+#   └───────────────────────┴───────────┘
+#
+function dev-layout() {
+  emulate -L zsh
+  setopt err_return pipe_fail
+
+  # Do nothing if not in tmux.
+  [[ -n "$TMUX" ]] || return 0
+
+  local main_pane dir right_top
+  main_pane="$(tmux display-message -p '#{pane_id}')"
+  dir="$(tmux display-message -p '#{pane_current_path}')"
+
+  # Right column (20% of the width) -> top: agent
+  right_top="$(tmux split-window -h -l 20% -c "$dir" -P -F '#{pane_id}')"
+  tmux send-keys -t "$right_top" "${DEFAULT_AGENT:-claude}" C-m
+
+  # Divide the right column into two panes (30% of the height) -> bottom: shell
+  tmux split-window -v -l 30% -c "$dir" -t "$right_top" >/dev/null
+
+  # Return to the left pane, where the invoker will launch the editor.
+  tmux select-pane -t "$main_pane"
 }
 
 # Allow `ls` to ignore files listed in a `.hidden` file in the target directory, unless the user explicitly requests to show all files.
