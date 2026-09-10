@@ -296,6 +296,15 @@ function cd() {
   fi
 }
 
+# Launch yazi and change the current working directory to the one returned by yazi.
+function y() {
+	local tmp cwd; tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd" || builtin true
+	command rm -f -- "$tmp"
+}
+
 # Allow nvim to diff two directories or files.
 function dirdiff() {
   nvim -c "DirDiff $1 $2"
