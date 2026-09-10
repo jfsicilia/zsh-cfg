@@ -1,3 +1,6 @@
+# Avoid showing % sometimes when launching zsh.
+PROMPT_EOL_MARK=''
+
 # PLUGINS ====================================================================
 
 # Set the directory we want to sotre zinit and plugins
