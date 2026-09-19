@@ -250,6 +250,7 @@ alias open=xdg-open
 alias _="cd ~/_"
 alias today="fd --changed-within=1d -tf '.*' ~"
 alias fzfgita='cd "$(gita ls "$(gita ll | fzf --ansi --nth=1 --with-nth=1,3,4.. | awk '\''{print $1}'\'')")"'
+alias fzfnvim="nvim -c 'lua vim.schedule(function() require(\"telescope.builtin\").find_files() end)'"
 # alias tmux='tmux -S ~/.tmux-socket'
 # alias claude="titled 'Claude Code' claude"
 alias claude="CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1 titled 'Claude Code' claude"
