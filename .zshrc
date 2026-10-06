@@ -260,6 +260,10 @@ alias zapzap='~/.local/bin/appimages/zapzap.appimage --no-sandbox'
 alias preview="fzf --preview 'bat --style=numbers --color=always --line-range :500 {}' --bind 'ctrl-f:preview-page-down,ctrl-b:preview-page-up'"
 alias autofirma="GDK_SCALE=2 autofirma"
 alias wm="workmux"
+alias nn="notenew"
+alias no="noteopen"
+alias nt="notetoday"
+alias nf="notefind"
 unalias ls 2>/dev/null
 
 # ENV VARIABLES ==============================================================
@@ -383,6 +387,52 @@ function ls() {
     else
         command lsd "$@"
     fi
+}
+
+OBSIDIAN_VAULTS_DIR="$HOME/vaults"
+OBSIDIAN_VAULTS_MAIN="$OBSIDIAN_VAULTS_DIR/main"
+
+# note new
+function notenew() {
+  [[ -z $1 ]] && { echo "usage: $0 <name>"; return 1; }
+  local root=$OBSIDIAN_VAULTS_MAIN dir
+  dir=$(cd "$root" && { echo .; fd -t d; } | fzf --prompt='dir> ') || return
+  mkdir -p "$root/$dir" && "${EDITOR:-nvim}" "$root/$dir/$1.md"
+}
+
+# note open
+function noteopen() {
+  local root=$OBSIDIAN_VAULTS_MAIN file
+  file=$(cd "$root" && fd -e md -t f |
+         fzf --query "$*" --prompt='note> ' --preview 'bat --color=always --style=plain {}') || return
+  "${EDITOR:-nvim}" "$root/$file"
+}
+
+# note today
+function notetoday() {
+  local tpl=$OBSIDIAN_VAULTS_MAIN/_config/_templates/daily_note_template.md
+  local dir=$OBSIDIAN_VAULTS_MAIN/_daily_notes/$(LC_ALL=C date +%Y/%m-%b)
+  local file=$dir/$(LC_ALL=C date +%F-%a).md
+  if [[ ! -e $file ]]; then
+    mkdir -p "$dir" && LC_ALL=C perl -MPOSIX -pe '
+      %m = (dddd=>"%A", MMMM=>"%B", YYYY=>"%Y", MMM=>"%b", ddd=>"%a", DD=>"%d", MM=>"%m");
+      s/<% tp\.file\.cursor\(\) %>//g;
+      s/<% tp\.file\.creation_date\(\) %>/strftime("%Y-%m-%d %H:%M", localtime)/ge;
+      # s/<% tp\.date\.now\("([^"]+)", *([-+]?\d+)[^%]*%>/
+        ($f=$1) =~ s#(dddd|MMMM|YYYY|MMM|ddd|DD|MM)#$m{$1}#g;
+        @d=localtime; strftime($f, 0, 0, 12, $d[3]+$2, $d[4], $d[5])/gex;
+    ' "$tpl" > "$file" || { rm -f "$file"; return 1; }
+  fi
+  "${EDITOR:-nvim}" "$file"
+}
+
+# note find
+function notefind() {
+  local sel file rest line
+  sel=$(cd $OBSIDIAN_VAULTS_MAIN && rg --line-number --no-heading . |
+        fzf --query "$*" --delimiter : --preview 'bat --color=always --highlight-line {2} {1}') || return
+  file=${sel%%:*}; rest=${sel#*:}; line=${rest%%:*}
+  "${EDITOR:-nvim}" +"$line" ~/vaults/dev/"$file"
 }
 
 # VI MODE for OH-MY-POSH =====================================================
