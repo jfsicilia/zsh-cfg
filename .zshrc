@@ -249,8 +249,12 @@ alias c=clear
 alias open=xdg-open
 alias _="cd ~/_"
 alias today="fd --changed-within=1d -tf '.*' ~"
-alias fzfgita='cd "$(gita ls "$(gita ll | fzf --ansi --nth=1 --with-nth=1,3,4.. | awk '\''{print $1}'\'')")"'
-alias fzfnvim="nvim -c 'lua vim.schedule(function() require(\"telescope.builtin\").find_files() end)'"
+alias fgita='cd "$(gita ls "$(gita ll | fzf --ansi --nth=1 --with-nth=1,3,4.. | awk '\''{print $1}'\'')")"'
+alias fzfgita=fgita
+alias fnvim="nvim -c 'lua vim.schedule(function() require(\"telescope.builtin\").find_files() end)'"
+alias fzfnvim=fnvim
+alias fkill='ps -eo pid,user,%cpu,%mem,etime,args --sort=-%cpu | fzf -m --header-lines=1 --reverse | awk "{print \$1}" | xargs -r kill'
+alias fzfkill=fkill
 # alias tmux='tmux -S ~/.tmux-socket'
 # alias claude="titled 'Claude Code' claude"
 alias claude="CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1 titled 'Claude Code' claude"
