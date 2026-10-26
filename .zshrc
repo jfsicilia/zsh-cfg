@@ -247,27 +247,40 @@ alias nvim-astro='NVIM_APPNAME="nvim-astro" nvim'
 alias tp=trash
 alias c=clear
 alias open=xdg-open
-alias _="cd ~/_"
+# Show files changed in the last 24 hours, only files (not directories), and ignore hidden files.
 alias today="fd --changed-within=1d -tf '.*' ~"
+# alias tmux='tmux -S ~/.tmux-socket'
+alias claude="CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1 titled 'Claude Code' claude"
+alias '??'="claude -p"
+alias obsidian='~/.local/bin/appimages/obsidian.appimage --no-sandbox'
+alias zapzap='~/.local/bin/appimages/zapzap.appimage --no-sandbox'
+alias autofirma="GDK_SCALE=2 autofirma"
+alias wm="workmux"
+
+# Obsidian helper aliases for note management.
+alias nn="notenew"
+alias no="noteopen"
+alias nt="notetoday"
+alias nf="notefind" 
+
+# Fuzzy aliases for gita, nvim, kill, ls
 alias fgita='cd "$(gita ls "$(gita ll | fzf --ansi --nth=1 --with-nth=1,3,4.. | awk '\''{print $1}'\'')")"'
 alias fzfgita=fgita
 alias fnvim="nvim -c 'lua vim.schedule(function() require(\"telescope.builtin\").find_files() end)'"
 alias fzfnvim=fnvim
 alias fkill='ps -eo pid,user,%cpu,%mem,etime,args --sort=-%cpu | fzf -m --header-lines=1 --reverse | awk "{print \$1}" | xargs -r kill'
 alias fzfkill=fkill
-# alias tmux='tmux -S ~/.tmux-socket'
-# alias claude="titled 'Claude Code' claude"
-alias claude="CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1 titled 'Claude Code' claude"
-alias '??'="claude -p"
-alias obsidian='~/.local/bin/appimages/obsidian.appimage --no-sandbox'
-alias zapzap='~/.local/bin/appimages/zapzap.appimage --no-sandbox'
-alias preview="fzf --preview 'bat --style=numbers --color=always --line-range :500 {}' --bind 'ctrl-f:preview-page-down,ctrl-b:preview-page-up'"
-alias autofirma="GDK_SCALE=2 autofirma"
-alias wm="workmux"
-alias nn="notenew"
-alias no="noteopen"
-alias nt="notetoday"
-alias nf="notefind"
+alias fls="lsd -A1 --color=always --icon=never --group-dirs=first | fzf --ansi --scheme=path --layout=reverse --delimiter ' ⇒ ' \
+  --preview 'if [ -d {1} ]; then lsd -Al --color=always --icon=always {1}/ 2>/dev/null || ls -A --color=always {1}/; else bat --color=always --style=numbers --line-range=:500 {1}; fi' \
+  --preview-window 'right:60%:wrap' \
+  --bind 'ctrl-f:preview-page-down,ctrl-b:preview-page-up,ctrl-d:preview-half-page-down,ctrl-u:preview-half-page-up'"
+alias fzfls=fls
+
+# I will bind a function to `ls` that will ignore files listed in a `.hidden` 
+# file in the target directory, unless the user explicitly requests to show 
+# all files. This is done by defining a function `ls()` that checks for the 
+# presence of a `.hidden` file and modifies the behavior of `ls` accordingly. 
+# The original `ls` command is called using `command lsd` to avoid recursion.
 unalias ls 2>/dev/null
 
 # ENV VARIABLES ==============================================================
