@@ -1,6 +1,15 @@
 # Avoid showing % sometimes when launching zsh.
 PROMPT_EOL_MARK=''
 
+# zsh-autosuggestions, zsh-syntax-highlighting and oh-my-posh each wrap zle
+# widgets (vi-cmd-mode, vi-insert, zle-line-finish...) and chain through one
+# another. That's legitimately deep (not a loop) but a fast synthetic burst
+# of keys (e.g. a kanata macro with no inter-key delay) can pile up enough
+# of these chains at once to blow the default 200-level FUNCNEST ceiling.
+# Measured depth per chain was ~12; 1000 leaves ~5-10x margin over the
+# worst case without masking a genuine runaway recursion for long.
+FUNCNEST=1000
+
 # PLUGINS ====================================================================
 
 # Set the directory we want to sotre zinit and plugins
