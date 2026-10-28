@@ -461,11 +461,20 @@ function notefind() {
 typeset -g _vimode_redrawing=0
 
 redraw-prompt() {
+  # WIDGET is only set while ZLE is running a widget. Widgets such as
+  # deactivate-region can fire after ^C (e.g. interrupting a command or
+  # atuin ai) when ZLE is not active; running _omp_precmd then corrupts
+  # the oh-my-posh prompt state.
+  [[ -z $WIDGET ]] && return
   (( _vimode_redrawing )) && return
   _vimode_redrawing=1
-  _omp_precmd
-  zle .reset-prompt
-  _vimode_redrawing=0
+  {
+    _omp_precmd
+    # After ^C, WIDGET can still be set while ZLE is already gone; ignore.
+    zle .reset-prompt 2>/dev/null
+  } always {
+    _vimode_redrawing=0
+  }
 }
 
 vimode-cmd() {
