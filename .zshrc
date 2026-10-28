@@ -454,9 +454,18 @@ function notefind() {
 }
 
 # VI MODE for OH-MY-POSH =====================================================
+# Guards redraw-prompt against re-entrancy: _omp_precmd forks the oh-my-posh
+# binary, so back-to-back vi mode switches (e.g. a kanata macro sending
+# esc/i with no delay) can fire a new redraw before the previous one has
+# returned. Without this guard, that nested call is what blows FUNCNEST.
+typeset -g _vimode_redrawing=0
+
 redraw-prompt() {
+  (( _vimode_redrawing )) && return
+  _vimode_redrawing=1
   _omp_precmd
   zle .reset-prompt
+  _vimode_redrawing=0
 }
 
 vimode-cmd() {
