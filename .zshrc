@@ -287,7 +287,8 @@ unalias ls 2>/dev/null
 # Set default editor
 export EDITOR=nvim
 export VISUAL=nvim
-export GITHUB_PERSONAL_ACCESS_TOKEN="$(gh auth token)"
+# Skipped where gh is not installed (servers); empty, not an error, if logged out.
+(( $+commands[gh] )) && export GITHUB_PERSONAL_ACCESS_TOKEN="$(gh auth token 2>/dev/null)"
 # Default AI agent command used by helpers like `dev-layout`.
 export DEFAULT_AGENT=claude
 # Change color for other-writable (mounted windows filesystems) to avoid
@@ -528,12 +529,17 @@ export VI_MODE="I"
 
 # VI MODE: Yank to clipboard  =====================================================
 
-# Custom yank that copies to system clipboard
-function zle-yank-to-clipboard() {
-  zle vi-yank                        
-  echo -n "$CUTBUFFER" | wl-copy
-}
-zle -N zle-yank-to-clipboard
+# Custom yank that copies to system clipboard: wl-copy on the Wayland desktop,
+# otherwise OSC 52 so the local terminal gets it (over SSH, through tmux).
+ function zle-yank-to-clipboard() {
+  zle vi-yank
+  if [[ -n $WAYLAND_DISPLAY ]] && (( $+commands[wl-copy] )); then
+    print -rn -- "$CUTBUFFER" | wl-copy
+  else
+    printf '\e]52;c;%s\a' "$(print -rn -- "$CUTBUFFER" | base64 | tr -d '\n')"
+  fi
+ }
+ zle -N zle-yank-to-clipboard
 
 # Override y in visual mode to also copy to clipboard
 bindkey -M vicmd 'y' zle-yank-to-clipboard
