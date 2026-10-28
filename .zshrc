@@ -502,37 +502,45 @@ vimode-replace() {
   redraw-prompt
 }
 
+# Re-sourcing ~/.zshrc must not decorate a widget twice: _omp_create_widget
+# would back up the already decorated (and autosuggest-wrapped) widget as its
+# "original", and the wrappers end up calling each other until FUNCNEST.
+_vimode_decorate() {
+  [[ -n ${widgets[._omp_original::$1]} ]] && return
+  _omp_create_widget "$@"
+}
+
 # This must be before _omp_create_widget 
 zmodload zsh/zle
 
 # CMD/Normal mode
-_omp_create_widget vi-cmd-mode vimode-cmd
-_omp_create_widget deactivate-region vimode-cmd
+_vimode_decorate vi-cmd-mode vimode-cmd
+_vimode_decorate deactivate-region vimode-cmd
 
 # Insert mode
-_omp_create_widget vi-insert vimode-insert
-_omp_create_widget vi-insert-bol vimode-insert
-_omp_create_widget vi-add-eol vimode-insert
-_omp_create_widget vi-add-next vimode-insert
-_omp_create_widget vi-change vimode-insert
-_omp_create_widget vi-change-eol vimode-insert
-_omp_create_widget vi-change-whole-line vimode-insert
-_omp_create_widget vi-open-line-above vimode-insert
-_omp_create_widget vi-open-line-below vimode-insert
+_vimode_decorate vi-insert vimode-insert
+_vimode_decorate vi-insert-bol vimode-insert
+_vimode_decorate vi-add-eol vimode-insert
+_vimode_decorate vi-add-next vimode-insert
+_vimode_decorate vi-change vimode-insert
+_vimode_decorate vi-change-eol vimode-insert
+_vimode_decorate vi-change-whole-line vimode-insert
+_vimode_decorate vi-open-line-above vimode-insert
+_vimode_decorate vi-open-line-below vimode-insert
 
 # Replace mode
-_omp_create_widget vi-replace vimode-replace
-_omp_create_widget vi-replace-chars vimode-replace
+_vimode_decorate vi-replace vimode-replace
+_vimode_decorate vi-replace-chars vimode-replace
 
 # Visual mode
-_omp_create_widget visual-mode vimode-visual
-_omp_create_widget visual-line-mode vimode-visual-line
+_vimode_decorate visual-mode vimode-visual
+_vimode_decorate visual-line-mode vimode-visual-line
 
 # reset to default mode at the end of line input reading
 line-finish() {
     export VI_MODE="I"
 }
-_omp_create_widget zle-line-finish line-finish
+_vimode_decorate zle-line-finish line-finish
 
 # Fix a bug when you C-c in CMD mode, you'd be prompted with CMD mode indicator
 # while in fact you would be in INS mode.
